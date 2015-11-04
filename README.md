@@ -47,6 +47,7 @@ To build a direct syscall libps4 simply provide `LibPS4SyscallDirect` to make. A
 When libps4 is build, a small resolver stub function is generated for each function. When a call to a libps4 function takes place, the call is intercepted. The context of the call (register arguments) are saved onto the stack, a resolution is performed, the context is restored, and the call to the resolved actual function is performed.
 
 The following steps take place as part of the resolution:
+
 1. If the call is the first call ever made to the library
 	- Load (determine the id of) libkernel.sprx, resolve the symbol sceKernelLoadStartModule to load and potentially start any other needed modules in the future
 	- Save both address in static (global) variables (bss)
