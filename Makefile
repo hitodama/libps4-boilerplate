@@ -21,9 +21,11 @@ SFILES	+=	$(wildcard $(SDIR)/**/**/*.s)
 OBJS	:=	$(patsubst $(SDIR)/%.c, $(ODIR)/%.c.o, $(CFILES))
 OBJS	+=	$(patsubst $(SDIR)/%.s, $(ODIR)/%.s.o, $(SFILES))
 
-TARGET = $(shell basename $(CURDIR)).a
+TARGET = lib/$(shell basename $(CURDIR)).a
 
 $(TARGET): $(ODIR) $(OBJS)
+	@mkdir -p $@
+	@rmdir $@
 	$(AR) rcs $@ $(OBJS)
 
 $(ODIR)/%.c.o: $(SDIR)/%.c
