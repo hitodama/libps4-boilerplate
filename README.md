@@ -50,10 +50,10 @@ The following steps take place as part of the resolution:
 1. If the call is the first call ever made to the library
 	- Load (determine the id of) libkernel.sprx, resolve the symbol sceKernelLoadStartModule to load and potentially start any other needed modules in the future
 	- Save both address in static (global) variables (bss)
-- If the call is the first call to a module
+2. If the call is the first call to a module
 	- sceKernelLoadStartModule the module by name
 	- Save the address in the modules static global variable (bss)
-- If the call is the first call to a function
+3. If the call is the first call to a function
 	- sceKernelDlsym the function by name
 	- Save the address into a (hidden) local variable (bss)
 
