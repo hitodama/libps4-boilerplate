@@ -60,7 +60,7 @@ The following steps take place as part of the resolution:
 
 Afterwards the call is performed against the hidden function address, regardless of which of these conditions was true. So most function calls will only need to resolve their own symbol, and that only once. Afterwards, they are redirected without further performance impacts (aside from the negligible redirection (jmp) itself).
 
-On error, in either of the above resolution steps, the call performs no operation and returns -1. This is at best avoided (since -1 may be a valid return value (e.g. strcmp). The generator is able to `check` all functions for their ability to be resolved. So before generating libps4 - each of the symbols will be checked. As such, a resolve error should never occur during normal operation. The prevention of runtime and sce restructions (such as out of memory during resolution or a limit on module loads) will be addressed down the line, once further understood.
+On error, in either of the above resolution steps, the call performs no operation and essentially should be considered undefined behaviour. The generator is able to `check` all functions for their ability to be resolved. So before generating libps4 - each of the symbols will be checked. As such, a resolve error should never occur during normal operation. The prevention of runtime and sce restructions (such as out of memory during resolution or a limit on module loads) will be addressed down the line, once further understood. Similarly errorhandling could be introduced trought (for example through signals or a call-back mechanism).
 
 ##Files
 ```
