@@ -1,19 +1,19 @@
 libps4-boilerplate
 =====
 
-> Imported by libps4-generator to generate libps4
+> Imported by [libps4-generator](https://github.com/ps4dev/libps4-generator) to generate [libps4](https://github.com/ps4dev/libps4)
 
 ##Description
 
-The libps4-boilerplate exposes C macros which generate code and data. libps4-generator generates small C stubs which consist of calls to these macros with generated arguments. This allows the generator to be simple and less error prone, as it does not actually need to write breakable C code, but instead to use a narrowly defined meta-language of macros.
+The boilerplate exposes C macros which generate code and data. [libps4-generator](https://github.com/ps4dev/libps4-generator) generates small C stubs which consist of calls to these macros with generated arguments. This allows the generator to be simple and less error prone, as it does not actually need to write breakable C code, but instead to use a narrowly defined domain-specific language (DSL) of macros.
 
 ##Internals
 
-The libps4-boilerplate can be used to generate various different global and local, read-only and uninitialized entries in the data segments of an elf file by using macros. They can also also generate function entries in the text (code) segment.
+The boilerplate can be used to generate various different global and local, read-only and uninitialized entries in the data segments of an elf file by using macros. They can also also generate function entries in the text (code) segment.
 
-These base macros are then further connected to expose concrete libps4 macros, which are intended to be used by libps4-generator to create valid C code files.
+These base macros are then further connected to expose concrete libps4 macros, which are intended to be used by [libps4-generator](https://github.com/ps4dev/libps4-generator) to create valid C code files.
 
-The macros are exposed in `resolve.h`. Any macro not listed here is considered private and improper as part of the meta-language.
+The macros are exposed in `resolve.h`. Macros not listed here, should not be considered part of the DSL (and improper to be used during generation).
 
 ###Macros
 ```c
@@ -52,15 +52,15 @@ The following steps take place as part of the resolution:
 	- Load (determine the id of) libkernel.sprx, resolve the symbol sceKernelLoadStartModule to load and potentially start any other needed modules in the future
 	- Save the address of lsm in static (global) variables (bss)
 2. If the call is the first call to a module
-	- sceKernelLoadStartModule the module by name
+	- sceKernelLoadStartModule the module
 	- Save the address in the modules static global variable (bss)
 3. If the call is the first call to a function
-	- sceKernelDlsym the function by name
+	- sceKernelDlsym the function
 	- Save the address into a (hidden) local variable (bss)
 
-Afterwards the call is performed against the hidden function address, regardless of which of these conditions was true. So most function calls in a module will only need to resolve their own symbol, and that only once. Afterwards, they are redirected without further performance impacts (aside from the negligible redirection (jmp) itself. In return, functions don't need to be pointers, and std headers can easily be imported without a translation.
+Afterwards the call is performed against the hidden function address, regardless of which of these conditions was true. So most function calls will only need to resolve their own symbol, and that only once. Afterwards, they are redirected without further performance impacts (aside from the negligible redirection (jmp) itself).
 
-On error, of either of the obove steps of resolution. The call performs no operation and returns -1. This is at best avoided (since -1 may be a desired valid return value (e.g. strcmp), however as the generator is able to check all functions for they ability to be resolved - and error should not occur on a `check` generated libps4 build. The prevention of runtime complications (such as out of memory during resolution) will further be a mart of the libraries hardening process.
+On error, in either of the above resolution steps, the call performs no operation and returns -1. This is at best avoided (since -1 may be a valid return value (e.g. strcmp). The generator is able to `check` all functions for their ability to be resolved. So before generating libps4 - each of the symbols will be checked. As such, a resolve error should never occur during normal operation. The prevention of runtime and sce restructions (such as out of memory during resolution or a limit on module loads) will be addressed down the line, once further understood.
 
 ##Files
 ```
@@ -81,4 +81,4 @@ syscall.h                       /* List of all libps4 supported syscalls */
 ##TODO
 - Extend syscall.h
 - Cleanup, Minor changes
-- Harden resolve (sceKernelLoadStartModule can exhaust internal sce constraints and fail)
+- Harden resolve (sceKernelLoadStartModule may exhaust internal sce constraints and fail)
