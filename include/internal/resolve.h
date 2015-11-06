@@ -103,13 +103,7 @@ uint64_t kerncall();
 				movabs $"#libName", %rdx \n \
 				movabs $"#fnName", %rcx \n \
 				xor %rax, %rax \n \
-				call resolveModuleAndSymbol \n \
-				cmp $-1, %rax \n \
-				je .L"#fn"ResolveError \n \
-				mov $0, %rax \n \
-				ret \n \
-			.L"#fn"ResolveError: \n \
-				ret \n \
+				jmp resolveModuleAndSymbol \n \
 			.size "#fn"Resolve, .-"#fn"Resolve \n \
 			.popsection \n \
 		");
