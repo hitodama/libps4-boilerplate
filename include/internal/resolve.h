@@ -83,7 +83,7 @@ uint64_t kerncall();
 #endif
 
 #ifndef LibPS4EnableManualResolution
-	#define FunctionResolver(libName, fn, fnName)
+	#define FunctionResolver(lib, libName, fn, fnName, address)
 	#define FunctionResolve(fn)
 #endif
 
