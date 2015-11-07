@@ -83,7 +83,7 @@ uint64_t kerncall();
 #endif
 
 #ifndef LibPS4EnableManualResolution
-	#define FunctionResolver(libName, fn, fnName)
+	#define FunctionResolver(lib, libName, fn, fnName, address)
 	#define FunctionResolve(fn)
 #endif
 
@@ -103,13 +103,7 @@ uint64_t kerncall();
 				movabs $"#libName", %rdx \n \
 				movabs $"#fnName", %rcx \n \
 				xor %rax, %rax \n \
-				call resolveModuleAndSymbol \n \
-				cmp $-1, %rax \n \
-				je .L"#fn"ResolveError \n \
-				mov $0, %rax \n \
-				ret \n \
-			.L"#fn"ResolveError: \n \
-				ret \n \
+				jmp resolveModuleAndSymbol \n \
 			.size "#fn"Resolve, .-"#fn"Resolve \n \
 			.popsection \n \
 		");
@@ -128,9 +122,9 @@ uint64_t kerncall();
 				movabs "#address", %rax \n \
 				xchg %rax, %r11 \n \
 				test %r11, %r11 \n \
-				je .L"#fn"ResolveI \n \
+				je .L"#fn"ResolveInternal \n \
 				jmp *%r11 \n \
-				.L"#fn"ResolveI: \n \
+				.L"#fn"ResolveInternal: \n \
 					call pushall \n \
 					movabs $"#lib", %rdi \n \
 					movabs $"#address", %rsi \n \
@@ -140,11 +134,10 @@ uint64_t kerncall();
 					call resolveModuleAndSymbol \n \
 					mov %rax, %r11 \n \
 					call popall \n \
-					cmp $-1, %r11 \n \
-					je .L"#fn"Error \n \
+					test %r11, %r11 \n \
+					js .L"#fn"Error \n \
 					jmp "#fn" \n \
 				.L"#fn"Error: \n \
-					mov $-1, %rax \n \
 					ret \n \
 			.size "#fn", .-"#fn" \n \
 			.popsection \n \
