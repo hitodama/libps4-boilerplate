@@ -1,11 +1,11 @@
-#include internal/pushpop.h
+#include ps4/internal/pushpop.h
 
 #FIXME: for completeness, take care of st0 ... one day ;)
 
 .pushsection .text
-.global pushall
-.type pushall, @function
-pushall:
+.global ps4Pushall
+.type ps4Pushall, @function
+ps4Pushall:
 	sub $240, %rsp
 
 	movq %rax, 8(%rsp)
@@ -37,11 +37,11 @@ pushall:
 	movq %rax, (%rsp)
 
 	ret
-.size pushall, .-pushall
+.size ps4Pushall, .-ps4Pushall
 
-.global popall
-.type popall, @function
-popall:
+.global ps4Popall
+.type ps4Popall, @function
+ps4Popall:
 	movq (%rsp), %rax
 	movq %rax, 240(%rsp)
 
@@ -72,5 +72,5 @@ popall:
 	add $240, %rsp
 
 	ret
-.size popall, .-popall
+.size ps4Popall, .-ps4Popall
 .popsection
